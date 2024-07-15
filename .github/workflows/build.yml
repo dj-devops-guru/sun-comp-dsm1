@@ -192,7 +192,7 @@ jobs:
       - name: Pack
         run: |
           #if [ -n "${{ env.VERSION }}" ]; then
-          zip -9 "arc-${{ GITHUB_SHA::7 }}.img.zip" arc.img
+          zip -9 "arc-${GITHUB_SHA::7}.img.zip" arc.img
           #  zip -9 "arc-${{ env.VERSION }}.vmdk-dyn.zip" arc-dyn.vmdk
           #  zip -9 "arc-${{ env.VERSION }}.vmdk-flat.zip" arc.vmdk arc-flat.vmdk
           #  zip -9 "arc-${{ env.VERSION }}.vhdx.zip" arc.vhdx
@@ -213,31 +213,4 @@ jobs:
             arc-*.img.zip
             update.zip
             checksum.sha256
-          retention-days: 5
-
-      # # Publish a release if is a tag
-      # - name: Release
-      #   if: success() && env.VERSION != ''
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     tag: ${{ env.VERSION }}
-      #     prerelease: ${{ inputs.prerelease }}
-      #     allowUpdates: true
-      #     body: |
-      #       ### Information:
-      #       Notice: ${{ inputs.notice }}
-      #       Buildtime: ${{ env.BUILD_TIME }}
-      #       Full Changelog and Arc Patch (Decryption Key) can be found in my Discord.
-
-      #       ### Versions:
-      #       Addons: ${{ env.ADDONSTAG }}
-      #       Configs: ${{ env.CONFIGSTAG }}
-      #       Modules: ${{ env.MODULESTAG }}
-      #       Patches: ${{ env.PATCHESTAG }}
-      #       Theme: ${{ env.THEMETAG }}
-      #       LKM: ${{ env.LKMTAG }}
-      #       Buildroot: ${{ env.BR_VERSION }}
-      #     artifacts: |
-      #       arc-*.zip
-      #       update.zip
-      #       checksum.sha256
+          retention-days: 2
