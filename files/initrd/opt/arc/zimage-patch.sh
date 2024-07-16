@@ -9,7 +9,7 @@ set -o pipefail # Get exit code from process piped
 # Sanity check
 [ -f "${ORI_ZIMAGE_FILE}" ] || (die "${ORI_ZIMAGE_FILE} not found!" | tee -a "${LOG_FILE}")
 
-rm -f "${MOD_ZIMAGE_FILE}"
+#rm -f "${MOD_ZIMAGE_FILE}"
 
 KERNEL="$(readConfigKey "kernel" "${USER_CONFIG_FILE}")"
 if [ "${KERNEL}" == "custom" ]; then
