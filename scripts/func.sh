@@ -180,13 +180,15 @@ function getPatches() {
 # $1 path
 function getTheme() {
   echo "Getting Theme begin"
+  local DEST_PATH="${1:-theme}"
   local CACHE_FILE="/tmp/theme.zip"
   rm -f "${CACHE_FILE}"
   pwd
   ls -lart
-  ls -lart /
-  ls -lart files/
-  #cp -f "files/initrd/opt/arc/theme.zip" "${CACHE_FILE}"
+  ls -lart scripts/
+  ls -lart files/initrd
+  ls -lart files/initrd/opt/arc/
+  cp -f "scripts/theme.zip" "${CACHE_FILE}"
   # Unzip Theme
   mkdir -p "${DEST_PATH}"
   unzip "${CACHE_FILE}" -d "${DEST_PATH}"

@@ -15,3 +15,5 @@ cache
 /files/board/arc/p3/configs
 /files/board/arc/p3/extensions
 /tests
+
+!scripts/theme.zip
