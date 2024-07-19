@@ -168,9 +168,16 @@ jobs:
           #fi
           zip -9 "arc-${GITHUB_SHA::7}.img.zip" arc.img
           echo "${{ inputs.update_version }}" >check.update
-        artifacts: |
-          arc-*.zip
-          update.zip
-          checksum.sha256
-          check.update
+      
+      # Upload artifact
+      - name: Upload
+        if: success() && env.VERSION != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: Images-New
+          path: |
+            arc-*.img.zip
+            update.zip
+            checksum.sha256
+          retention-days: 2
 
