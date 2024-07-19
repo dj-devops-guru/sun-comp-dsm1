@@ -1,5 +1,5 @@
-ARC_VERSION="0.0.1"
-ARC_TITLE="Sun Computer ${ARC_VERSION}"
+ARC_VERSION="24.7.1"
+ARC_TITLE="Sun Comp DSM ${ARC_VERSION}"
 
 # Define paths
 PART1_PATH="/mnt/p1"

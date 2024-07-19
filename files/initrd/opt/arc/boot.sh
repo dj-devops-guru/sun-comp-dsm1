@@ -9,7 +9,7 @@ function bootDSM () {
   # Print Title centralized
   clear
   COLUMNS=${COLUMNS:-50}
-  BANNER="$(figlet -c -w "$(((${COLUMNS})))" "Sun Computer")"
+  BANNER="$(figlet -c -w "$(((${COLUMNS})))" "Sun Comp DSM")"
   TITLE="Version:"
   TITLE+=" ${ARC_TITLE}"
   printf "\033[1;30m%*s\n" ${COLUMNS} ""
@@ -197,14 +197,6 @@ function bootDSM () {
   CMDLINE_LINE=$(echo "${CMDLINE_LINE}" | sed 's/^ //') # Remove leading space
   echo "${CMDLINE_LINE}" >"${PART1_PATH}/cmdline.yml"
 
-  # Save command line to grubenv
-  if echo "apollolake geminilake purley" | grep -wq "${PLATFORM}"; then
-    if grep -q "^flags.*x2apic.*" /proc/cpuinfo; then
-      checkCmdline "arc_cmdline" "nox2apic" || addCmdline "arc_cmdline" "nox2apic"
-    fi
-  else
-    checkCmdline "arc_cmdline" "nox2apic" && delCmdline "arc_cmdline" "nox2apic"
-  fi
   # Boot
   DIRECTBOOT="$(readConfigKey "directboot" "${USER_CONFIG_FILE}")"
   if [ "${DIRECTBOOT}" == "true" ]; then
@@ -283,7 +275,7 @@ function bootDSM () {
       else
         URL="http://find.synology.com/"
       fi
-      python ${ARC_PATH}/include/functions.py makeqr -d "https://suncomputers.biz" -l "6" -o "${TMP_PATH}/qrcode_boot.png"
+      python ${ARC_PATH}/include/functions.py makeqr -d "${URL}" -l "6" -o "${TMP_PATH}/qrcode_boot.png"
       [ -f "${TMP_PATH}/qrcode_boot.png" ] && echo | fbv -acufi "${TMP_PATH}/qrcode_boot.png" >/dev/null 2>/dev/null || true
     fi
 

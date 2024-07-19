@@ -54,7 +54,7 @@ function addonSelection() {
       echo -e "${ADDON} \"${DESC}\" ${ACT}" >>"${TMP_PATH}/opts"
     fi
   done < <(availableAddons "${PLATFORM}")
-  dialog --backtitle "$(backtitle)" --title "Sun Computer DSM Addons" --aspect 18 \
+  dialog --backtitle "$(backtitle)" --title "DSM Addons" --aspect 18 \
     --checklist "Select DSM Addons to include.\nPlease read Wiki before choosing anything.\nSelect with SPACE, Confirm with ENTER!" 0 0 0 \
     --file "${TMP_PATH}/opts" 2>"${TMP_PATH}/resp"
   [ $? -ne 0 ] && return 1
@@ -67,7 +67,7 @@ function addonSelection() {
     writeConfigKey "addons.\"${ADDON}\"" "" "${USER_CONFIG_FILE}"
   done
   ADDONSINFO="$(readConfigEntriesArray "addons" "${USER_CONFIG_FILE}")"
-  dialog --backtitle "$(backtitle)" --title "Sun Computer DSM Addons" \
+  dialog --backtitle "$(backtitle)" --title "DSM Addons" \
     --msgbox "DSM Addons selected:\n${ADDONSINFO}" 0 0
 }
 
@@ -835,8 +835,8 @@ function updateMenu() {
     case "$(cat ${TMP_PATH}/resp)" in
       1)
         dialog --backtitle "$(backtitle)" --title "Automated Update" --aspect 18 \
-          --msgbox "You are Running with Latest Version! No new version available!" 0 0
-        #. ${ARC_PATH}/update.sh
+          --msgbox "Loader will proceed Automated Update Mode.\nPlease wait until progress is finished!" 0 0
+        . ${ARC_PATH}/update.sh
         ;;
       2)
         # Ask for Tag
@@ -1918,12 +1918,12 @@ function decryptMenu() {
   if [ -f "${S_FILE_ENC}" ]; then
     CONFIGSVERSION="$(cat "${MODEL_CONFIG_PATH}/VERSION")"
     cp -f "${S_FILE}" "${S_FILE}.bak"
-    dialog --backtitle "$(backtitle)" --colors --title "SunComp Decrypt" \
+    dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Decrypt" \
       --inputbox "Enter Decryption Key for ${CONFIGSVERSION}" 7 40 2>"${TMP_PATH}/resp"
     [ $? -ne 0 ] && return
     ARC_KEY=$(cat "${TMP_PATH}/resp" | tr '[:lower:]' '[:upper:]')
     if openssl enc -in "${S_FILE_ENC}" -out "${S_FILE_ARC}" -d -aes-256-cbc -k "${ARC_KEY}" 2>/dev/null; then
-      dialog --backtitle "$(backtitle)" --colors --title "SunComp Decrypt" \
+      dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Decrypt" \
         --msgbox "Decrypt successful: You can use Arc Patch." 5 50
       cp -f "${S_FILE_ARC}" "${S_FILE}"
       writeConfigKey "arc.key" "${ARC_KEY}" "${USER_CONFIG_FILE}"
@@ -1933,7 +1933,7 @@ function decryptMenu() {
       BUILDDONE="$(readConfigKey "arc.builddone" "${USER_CONFIG_FILE}")"
     else
       cp -f "${S_FILE}.bak" "${S_FILE}"
-      dialog --backtitle "$(backtitle)" --colors --title "SunComp Decrypt" \
+      dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Decrypt" \
         --msgbox "Decrypt failed: Wrong Key for this Version." 5 50
       writeConfigKey "arc.key" "" "${USER_CONFIG_FILE}"
       writeConfigKey "arc.confdone" "false" "${USER_CONFIG_FILE}"
@@ -1959,7 +1959,7 @@ function arcNIC () {
     DRIVER="$(ls -ld /sys/class/net/${ETH}/device/driver 2>/dev/null | awk -F '/' '{print $NF}')"
     echo -e "${ETH} \"${DRIVER}\"" >>"${TMP_PATH}/opts"
   done
-  dialog --backtitle "$(backtitle)" --title "SunComp NIC" \
+  dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  NIC" \
     --default-item "${ARCNIC}" --menu  "Choose a NIC" 0 0 0 --file "${TMP_PATH}/opts" \
     2>${TMP_PATH}/resp
   [ $? -ne 0 ] && return

@@ -86,12 +86,12 @@ function arcUpdate() {
 function boot() {
   CONFDONE="$(readConfigKey "arc.confdone" "${USER_CONFIG_FILE}")"
   if [ "${CONFDONE}" == "true" ]; then
-    dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+    dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
       --infobox "Rebooting to automated Build Mode...\nPlease stay patient!" 4 30
     sleep 3
     rebootTo automated
   else
-    dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+    dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
       --infobox "Rebooting to Config Mode...\nPlease stay patient!" 4 30
     sleep 3
     rebootTo config

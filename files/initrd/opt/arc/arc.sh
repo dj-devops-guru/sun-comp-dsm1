@@ -130,7 +130,7 @@ function arcModel() {
         [ -n "${ARCCONF}" ] && ARC="x" || ARC=""
         [ "${DT}" == "true" ] && DTS="x" || DTS=""
         IGPUS=""
-        [[ "${A}" == "apollolake" || "${A}" == "geminilake" ]] && IGPUS="up to 10th"
+        [[ "${A}" == "apollolake" || "${A}" == "geminilake" ]] && IGPUS="up to 9th"
         [ "${A}" == "epyc7002" ] && IGPUS="up to 14th" 
         [ "${DT}" == "true" ] && HBAS="" || HBAS="x"
         [ "${M}" == "SA6400" ] && HBAS="x"
@@ -153,7 +153,7 @@ function arcModel() {
           if [ "${A}" != "epyc7002" ] && [ ${SATACONTROLLER} -eq 0 ] && [ "${EXTERNALCONTROLLER}" == "false" ]; then
             COMPATIBLE=0
           fi
-          if [ "${A}" = "epyc7002" ] && [ ${SCSICONTROLLER} -ne 0 ]; then
+          if [ "${A}" = "epyc7002" ] && [[ ${SCSICONTROLLER} -ne 0 || ${RAIDCONTROLLER} -ne 0 ]]; then
             COMPATIBLE=0
           fi
           [ -z "$(grep -w "${M}" "${S_FILE}")" ] && COMPATIBLE=0
@@ -167,16 +167,16 @@ function arcModel() {
         fi
       done < <(cat "${TMP_PATH}/modellist")
       if [ -n "${ARC_KEY}" ]; then
-        dialog --backtitle "$(backtitle)" --title "SunComp DSM Model" --colors \
+        dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  DSM Model" --colors \
           --cancel-label "Show all" --help-button --help-label "Exit" \
           --extra-button --extra-label "Info" \
-          --menu "Supported Models for your Hardware (x = supported / + = need Addons)\n$(printf "\Zb%-16s\Zn \Zb%-15s\Zn \Zb%-5s\Zn \Zb%-5s\Zn \Zb%-12s\Zn \Zb%-5s\Zn \Zb%-10s\Zn \Zb%-12s\Zn \Zb%-10s\Zn \Zb%-10s\Zn" "Model" "Platform" "DT" "Arc" "iGPU/i915" "HBA" "M.2 Cache" "M.2 Volume" "USB Mount" "Source")" 0 115 0 \
+          --menu "Supported Models for your Hardware (x = supported / + = need Addons)\n$(printf "\Zb%-16s\Zn \Zb%-15s\Zn \Zb%-5s\Zn \Zb%-5s\Zn \Zb%-12s\Zn \Zb%-5s\Zn \Zb%-10s\Zn \Zb%-12s\Zn \Zb%-10s\Zn \Zb%-10s\Zn" "Model" "Platform" "DT" "Arc" "Intel iGPU" "HBA" "M.2 Cache" "M.2 Volume" "USB Mount" "Source")" 0 115 0 \
           --file "${TMP_PATH}/menu" 2>"${TMP_PATH}/resp"
       else
         dialog --backtitle "$(backtitle)" --title "DSM Model" --colors \
           --cancel-label "Show all" --help-button --help-label "Exit" \
           --extra-button --extra-label "Info" \
-          --menu "Supported Models for your Hardware (x = supported / + = need Addons) | Syno Models can have faulty Values.\n$(printf "\Zb%-16s\Zn \Zb%-15s\Zn \Zb%-5s\Zn \Zb%-12s\Zn \Zb%-5s\Zn \Zb%-10s\Zn \Zb%-12s\Zn \Zb%-10s\Zn \Zb%-10s\Zn" "Model" "Platform" "DT" "iGPU/i915" "HBA" "M.2 Cache" "M.2 Volume" "USB Mount" "Source")" 0 115 0 \
+          --menu "Supported Models for your Hardware (x = supported / + = need Addons) | Syno Models can have faulty Values.\n$(printf "\Zb%-16s\Zn \Zb%-15s\Zn \Zb%-5s\Zn \Zb%-12s\Zn \Zb%-5s\Zn \Zb%-10s\Zn \Zb%-12s\Zn \Zb%-10s\Zn \Zb%-10s\Zn" "Model" "Platform" "DT" "Intel iGPU" "HBA" "M.2 Cache" "M.2 Volume" "USB Mount" "Source")" 0 115 0 \
           --file "${TMP_PATH}/menu" 2>"${TMP_PATH}/resp"
       fi
       RET=$?
@@ -284,7 +284,7 @@ function arcVersion() {
       rm -f "${PART1_PATH}/grub_cksum.syno" "${PART1_PATH}/GRUB_VER" "${PART2_PATH}/"* >/dev/null 2>&1 || true
     fi
   fi
-  dialog --backtitle "$(backtitle)" --title "SunComp Config" \
+  dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Config" \
     --infobox "Reconfiguring Addons, Modules and Synoinfo" 3 50
   # Reset Synoinfo
   writeConfigKey "synoinfo" "{}" "${USER_CONFIG_FILE}"
@@ -344,7 +344,7 @@ function arcPatch() {
   elif [ "${AUTOMATED}" == "false" ]; then
     if [ -n "${ARCCONF}" ]; then
       dialog --clear --backtitle "$(backtitle)" \
-        --nocancel --title "SunComp Patch"\
+        --nocancel --title "Sun Comp DSM  Patch"\
         --menu "Please choose an Option." 7 50 0 \
         1 "Use Arc Patch (QC, Push Notify and AME)" \
         2 "Use random SN/Mac" \
@@ -462,24 +462,24 @@ function arcSettings() {
     # Check for DT and HBA/Raid Controller
     if [ "${PLATFORM}" != "epyc7002" ]; then
       if [ "${DT}" == "true" ] && [ "${EXTERNALCONTROLLER}" == "true" ]; then
-        dialog --backtitle "$(backtitle)" --title "SunComp Warning" \
+        dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Warning" \
           --msgbox "WARN: You use a HBA/Raid Controller and selected a DT Model. This is still an experimental." 5 90
       fi
     fi
     # Check for more then 8 Ethernet Ports
     DEVICENIC="$(readConfigKey "device.nic" "${USER_CONFIG_FILE}")"
     if [ ${DEVICENIC} -gt 8 ]; then
-      dialog --backtitle "$(backtitle)" --title "SunComp Warning" \
+      dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Warning" \
         --msgbox "WARN: You have more then 8 Ethernet Ports. Only 8 supported by DSM." 5 80
     fi
     # Check for AES
     if [ "${AESSYS}" == "false" ]; then
-      dialog --backtitle "$(backtitle)" --title "SunComp Warning" \
+      dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Warning" \
         --msgbox "WARN: Your System doesn't support Hardwareencryption in DSM. (AES)" 5 80
     fi
     # Check for CPUFREQ
     if [ "${CPUFREQ}" == "false" ]; then
-      dialog --backtitle "$(backtitle)" --title "SunComp Warning" \
+      dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Warning" \
         --msgbox "WARN: Your System doesn't support CPU Frequency Scaling in DSM." 5 80
     fi
   fi
@@ -611,14 +611,15 @@ function make() {
   mkdir -p "${UNTAR_PAT_PATH}"
   if [ "${OFFLINE}" == "false" ]; then
     # Get PAT Data
-    dialog --backtitle "$(backtitle)" --colors --title "SunComp Build" \
+    dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Build" \
       --infobox "Get PAT Data from Syno..." 3 40
     idx=0
     while [ ${idx} -le 3 ]; do # Loop 3 times, if successful, break
+      local URL="https://www.synology.com/api/support/findDownloadInfo?lang=en-us&product=${MODEL/+/%2B}&major=${PRODUCTVER%%.*}&minor=${PRODUCTVER##*.}"
       if [ "${ARCNIC}" == "auto" ]; then
-        PAT_DATA="$(curl -skL -m 10 "https://www.synology.com/api/support/findDownloadInfo?lang=en-us&product=${MODEL/+/%2B}&major=${PRODUCTVER%%.*}&minor=${PRODUCTVER##*.}")"
+        PAT_DATA="$(curl -skL -m 10 "${URL}")"
       else
-        PAT_DATA="$(curl --interface ${ARCNIC} -skL -m 10 "https://www.synology.com/api/support/findDownloadInfo?lang=en-us&product=${MODEL/+/%2B}&major=${PRODUCTVER%%.*}&minor=${PRODUCTVER##*.}")"
+        PAT_DATA="$(curl --interface ${ARCNIC} -skL -m 10 "${URL}")"
       fi
       if [ "$(echo ${PAT_DATA} | jq -r '.success' 2>/dev/null)" == "true" ]; then
         if echo ${PAT_DATA} | jq -r '.info.system.detail[0].items[0].files[0].label_ext' 2>/dev/null | grep -q 'pat'; then
@@ -637,16 +638,18 @@ function make() {
       idx=$((${idx} + 1))
     done
     if [ "${VALID}" == "false" ]; then
-      dialog --backtitle "$(backtitle)" --colors --title "SunComp Build" \
+      dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Build" \
         --infobox "Get PAT Data from Github..." 3 40
       idx=0
       while [ ${idx} -le 3 ]; do # Loop 3 times, if successful, break
+        URL="https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_url"
+        HASH="https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_hash"
         if [ "${ARCNIC}" == "auto" ]; then
-          PAT_URL="$(curl -skL -m 10 "https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_url")"
-          PAT_HASH="$(curl -skL -m 10 "https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_hash")"
+          PAT_URL="$(curl -skL -m 10 "${URL}")"
+          PAT_HASH="$(curl -skL -m 10 "${HASH}")"
         else
-          PAT_URL="$(curl --interface ${ARCNIC} -m 10 -skL "https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_url")"
-          PAT_HASH="$(curl --interface ${ARCNIC} -m 10 -skL "https://raw.githubusercontent.com/AuxXxilium/arc-dsm/main/dsm/${MODEL/+/%2B}/${PRODUCTVER}/pat_hash")"
+          PAT_URL="$(curl --interface ${ARCNIC} -m 10 -skL "${URL}")"
+          PAT_HASH="$(curl --interface ${ARCNIC} -m 10 -skL "$HASH")"
         fi
         PAT_URL=${PAT_URL%%\?*}
         if [ -n "${PAT_URL}" ] && [ -n "${PAT_HASH}" ]; then
@@ -663,7 +666,7 @@ function make() {
         MSG="Failed to get PAT Data.\n"
         MSG+="Please manually fill in the URL and Hash of PAT.\n"
         MSG+="You will find these Data at: https://download.synology.com"
-        dialog --backtitle "$(backtitle)" --colors --title "SunComp Build" --default-button "OK" \
+        dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Build" --default-button "OK" \
           --form "${MSG}" 10 110 2 "URL" 1 1 "${PAT_URL}" 1 7 100 0 "HASH" 2 1 "${PAT_HASH}" 2 7 100 0 \
           2>"${TMP_PATH}/resp"
         RET=$?
@@ -672,7 +675,7 @@ function make() {
         PAT_URL="$(cat "${TMP_PATH}/resp" | sed -n '1p')"
         PAT_HASH="$(cat "${TMP_PATH}/resp" | sed -n '2p')"
     elif [ "${VALID}" == "false" ]; then
-        dialog --backtitle "$(backtitle)" --colors --title "SunComp Build" \
+        dialog --backtitle "$(backtitle)" --colors --title "Sun Comp DSM  Build" \
           --infobox "Could not get PAT Data..." 4 30
         PAT_URL="#"
         PAT_HASH="#"
@@ -770,7 +773,7 @@ function make() {
       fi
     fi
   else
-    dialog --backtitle "$(backtitle)" --title "SunComp Build" --aspect 18 \
+    dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Build" --aspect 18 \
       --infobox "Can't build Custom Loader while Offline!\nExit." 4 40
     VALID="false"
     sleep 5
@@ -839,7 +842,7 @@ function juniorboot() {
   if [ $? -eq 0 ]; then
     make
   fi
-  dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+  dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
     --infobox "Booting DSM Reinstall Mode...\nPlease stay patient!" 4 30
   sleep 2
   rebootTo junior
@@ -854,7 +857,7 @@ function boot() {
   if [ $? -eq 0 ]; then
     arcSummary
   fi
-  dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+  dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
     --infobox "Booting DSM...\nPlease stay patient!" 4 25
   sleep 2
   bootDSM
@@ -972,7 +975,6 @@ else
       echo "X \"Sata DOM: \Z4${SATADOM}\Zn \" "                                               >>"${TMP_PATH}/menu"
       echo "u \"Switch LKM Version: \Z4${LKM}\Zn \" "                                         >>"${TMP_PATH}/menu"
       echo "c \"Switch IPv6 Support: \Z4${IPV6}\Zn \" "                                       >>"${TMP_PATH}/menu"
-      echo "h \"Screen off: \Z4${SCREENOFF}\Zn  \" "                                          >>"${TMP_PATH}/menu"
       echo "B \"Grep DSM Config from Backup \" "                                              >>"${TMP_PATH}/menu"
       echo "L \"Grep Logs from dbgutils \" "                                                  >>"${TMP_PATH}/menu"
       echo "w \"Reset Loader to Defaults \" "                                                 >>"${TMP_PATH}/menu"
@@ -996,7 +998,7 @@ else
     echo "V \"Credits \" "                                                                    >>"${TMP_PATH}/menu"
 
     dialog --clear --default-item ${NEXT} --backtitle "$(backtitle)" --colors \
-      --cancel-label "Exit" --title "SunComp Menu" --menu "" 0 0 0 --file "${TMP_PATH}/menu" \
+      --cancel-label "Exit" --title "Sun Comp DSM  Menu" --menu "" 0 0 0 --file "${TMP_PATH}/menu" \
       2>"${TMP_PATH}/resp"
     [ $? -ne 0 ] && break
     case "$(cat ${TMP_PATH}/resp)" in
@@ -1129,7 +1131,7 @@ else
           writeConfigKey "arc.ipv6" "true" "${USER_CONFIG_FILE}"
           if cat "${USER_GRUB_CONFIG}" | grep -q 'ipv6.disable=1'; then
             sed -i 's/ipv6.disable=1/ipv6.disable=0/g' "${USER_GRUB_CONFIG}"
-            dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+            dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
               --infobox "Rebooting with IPv6 Support!" 4 30
             sleep 3
             rebootTo config
@@ -1138,7 +1140,7 @@ else
           writeConfigKey "arc.ipv6" "false" "${USER_CONFIG_FILE}"
           if cat "${USER_GRUB_CONFIG}" | grep -q 'ipv6.disable=0'; then
             sed -i 's/ipv6.disable=0/ipv6.disable=1/g' "${GRUB_CONFIG_FILE}"
-            dialog --backtitle "$(backtitle)" --title "SunComp Boot" \
+            dialog --backtitle "$(backtitle)" --title "Sun Comp DSM  Boot" \
               --infobox "Rebooting without IPv6 Support!" 4 30
             sleep 3
             rebootTo config
@@ -1156,17 +1158,6 @@ else
       C) cloneLoader; NEXT="C" ;;
       F) formatDisks; NEXT="F" ;;
       G) package; NEXT="G" ;;
-      h) dialog --backtitle "$(backtitle)" --title "Screen off" \
-        --yesno "Modifying this item requires a reboot, continue?" 0 0
-      RET=$?
-      [ ${RET} -ne 0 ] && continue
-      checkCmdline "arc_cmdline" "nomodeset" && delCmdline "arc_cmdline" "nomodeset" || addCmdline "arc_cmdline" "nomodeset"
-      dialog --backtitle "$(backtitle)" --title "Screen off" \
-        --infobox "Reboot to Arc Config Mode" 0 0
-      rebootTo config
-      exit 0
-      NEXT="h"
-      ;;
       # Misc Settings
       x) backupMenu; NEXT="x" ;;
       M) arcNIC; NEXT="M" ;;
