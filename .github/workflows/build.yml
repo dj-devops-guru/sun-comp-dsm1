@@ -1,11 +1,5 @@
-#
-# Copyright (C) 2023 AuxXxilium <https://github.com/AuxXxilium> and Ing <https://github.com/wjz304>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
 
-name: Sun CompBuildIt
+name: Sun Computer Build
 
 on:
   workflow_dispatch:
@@ -46,7 +40,7 @@ jobs:
         if: inputs.clean == true
         uses: Nats-ji/delete-old-releases@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SUN_GITHUB_TOKEN }}
           keep-count: 10
           keep-old-minor-releases: false
 
