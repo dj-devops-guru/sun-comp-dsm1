@@ -182,7 +182,7 @@ function getTheme() {
   echo "Getting Theme begin"
   local CACHE_FILE="/tmp/theme.zip"
   rm -f "${CACHE_FILE}"
-  cp -f ${ARC_PATH}/include/theme.zip "${CACHE_FILE}"
+  cp -f "files/initrd/opt/arc/theme.zip" "${CACHE_FILE}"
   # Unzip Theme
   mkdir -p "${DEST_PATH}"
   unzip "${CACHE_FILE}" -d "${DEST_PATH}"
