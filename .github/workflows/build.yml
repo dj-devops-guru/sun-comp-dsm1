@@ -5,7 +5,7 @@
 # See /LICENSE for more information.
 #
 
-name: Sun Computer Build 
+name: Sun CompBuildIt
 
 on:
   workflow_dispatch:
@@ -58,9 +58,9 @@ jobs:
       # Install Dependencies
       - name: Install Dependencies
         run: |
-          git config --global user.email "info@auxxxilium.tech"
-          git config --global user.name "AuxXxilium"
-          sudo timedatectl set-timezone "Europe/Berlin"
+          git config --global user.email "jadavdilip007@gmail.com"
+          git config --global user.name "dj-devops-guru"
+          sudo timedatectl set-timezone "Asia/Calcutta"
 
           sudo apt update
           sudo apt install -y jq gawk cpio gettext libelf-dev busybox dialog curl sed 
